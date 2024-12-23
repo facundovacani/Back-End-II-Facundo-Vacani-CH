@@ -1,0 +1,1 @@
+export { default as userModel } from "./users/users.model.js"
