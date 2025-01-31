@@ -1,9 +1,9 @@
 import passport from "passport";
 import jwt, { ExtractJwt } from "passport-jwt";
 import local from "passport-local";
-import { userModel } from "../models/index.js";
 import config from "./config.js";
 import { createPass, isUserPassword } from "../utils/jwt.js";
+import { usersRepository } from "../repository/index.js";
 
 const passportInit = () => {
     passport.use(
@@ -23,7 +23,7 @@ const passportInit = () => {
                     return done(null, jwt_payload.user);
                 } catch (err) {
                     return done(err, false, {
-                        message: "There is a problem with the current session"
+                        message: "There is a problem with the current session",
                     });
                 }
             }
@@ -40,7 +40,7 @@ const passportInit = () => {
             async (req, username, password, done) => {
                 const { first_name, last_name, age } = req.body;
                 try {
-                    const user = await userModel.findOne({ email: username });
+                    const user = await usersRepository.getUser(username);
                     if (user)
                         return done(null, false, {
                             message: "Already exist user with that email",
@@ -52,9 +52,8 @@ const passportInit = () => {
                         last_name,
                         age,
                     };
-
-                    const result = await userModel.create(newUser);
-                    return done(null, result);
+                    req.newUser = newUser;
+                    return done(null, req.newUser);
                 } catch (err) {
                     return done(err);
                 }
@@ -70,7 +69,7 @@ const passportInit = () => {
             },
             async (username, password, done) => {
                 try {
-                    const user = await userModel.findOne({ email: username });
+                    const user = await usersRepository.getUser(username);
                     if (!user)
                         return done(null, false, {
                             message: "There is a problem with that username",
@@ -84,7 +83,15 @@ const passportInit = () => {
                             message: "failed to try to login",
                         });
                     }
-                    return done(null, user);
+                    return done(null, {
+                        role: user.role,
+                        cart: user?.cart,
+                        first_name: user.first_name,
+                        _id: user._id,
+                        age: user.age,
+                        last_name: user.last_name,
+                        email: user.email
+                    });
                 } catch (err) {
                     return done(err);
                 }

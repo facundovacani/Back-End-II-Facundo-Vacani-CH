@@ -1,18 +1,19 @@
 import { Router } from "express";
 import { passportCall } from "../../utils/passportCall.js";
-import { roleUser } from "../../middleware/index.js";
-import { userController } from "../../controllers/index.js";
+import { roleUser } from "../../middleware/roleUser.js";
+import { UsersController } from "../../controllers/index.js";
+import { authorization } from "../../middleware/permissions.js";
+import { rols } from "../../const/rols.js";
 
 const router = Router();
+router.get("/", passportCall("current"), authorization(rols), UsersController.getUsers);
 
-router.get("/", passportCall("current"), roleUser, userController.getUsers);
+router.get("/current", passportCall("current"), authorization(rols), UsersController.getUser);
 
-router.get("/current", passportCall("current"), userController.getUser);
+router.get("/logout", UsersController.logout);
 
-router.get("/logout", userController.logout);
+router.post("/login", passportCall("login"), UsersController.login);
 
-router.post("/login", passportCall("login"), userController.login);
-
-router.post("/register", passportCall("register"), userController.register);
+router.post("/register", passportCall("register"), UsersController.register);
 
 export default router;
