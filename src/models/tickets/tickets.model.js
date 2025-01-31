@@ -24,14 +24,22 @@ const ticketModel = Schema({
         ],
         default: [],
     },
-    totalPrice: {
+    purchase_datetime: {
+        type: Date,
+        default: Date.now,
+    },
+    amount: {
         type: Number,
         required: true,
     },
-    userId: {
-        type: Schema.Types.ObjectId,
+    purchaser: {
+        type: String,
         required: true,
     },
+    code: {
+        type:String,
+        unique:true,
+    }
 });
 
 export default model("Tickets", ticketModel);

@@ -14,7 +14,7 @@ export default class TicketRepository {
     }
 
     async getTickets(filter) {
-        try {
+        try {            
             const tickets = await this.dao.get(filter)
             return tickets.map(ticket => new TicketDTO(ticket));
         } catch (err) {

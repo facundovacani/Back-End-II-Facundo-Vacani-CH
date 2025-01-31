@@ -1,7 +1,8 @@
 export default class TicketDTO{
     constructor(ticket){
         this.products = ticket.products
-        this.totalPrice = ticket.totalPrice
-        this.id = ticket._id
+        this.amount = ticket.amount
+        this.code = ticket.code
+        this.purchaser = ticket.purchaser
     }
 }

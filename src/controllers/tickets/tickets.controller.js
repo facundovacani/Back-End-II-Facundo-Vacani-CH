@@ -16,12 +16,12 @@ class TicketController {
         }
     }
 
-    static async getTickets(req, res) {
+    static async getTickets(req, res) { 
         try {
             const filters = {
-                ...(req.query.userId && req.user.role
-                    ? { userId: req.query?.category }
-                    : { userId: req.user._id}),
+                ...(req.user.email && req.user.role == "admin"
+                    ? undefined
+                    : { purchaser: req.user.email })
             };
             const tickets = await ticketRepository.getTickets(filters);
             return res.status(200).json(tickets);

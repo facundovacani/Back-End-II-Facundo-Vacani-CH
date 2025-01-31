@@ -179,11 +179,12 @@ class CartController {
                 const ticket = new TicketDTO(
                     await ticketRepository.create({
                         products: stockAvailable,
-                        totalPrice: stockAvailable.reduce(
+                        amount: stockAvailable.reduce(
                             (acc, item) => (acc += item.total),
                             0
                         ),
-                        userId: req.user._id,
+                        purchaser: req.user.email,
+                        code: new Date().getTime() + Math.random() * 1000,
                     })
                 );
 
